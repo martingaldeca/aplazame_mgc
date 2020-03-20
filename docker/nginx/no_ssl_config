@@ -1,0 +1,46 @@
+server {
+    listen     *:80;
+    server_name localhost;
+    charset     utf-8;
+
+    location / {
+        proxy_pass http://aplazame_mgc:3141;
+        proxy_redirect    off;
+
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location /flower-internal/ {
+        internal;
+        rewrite ^/flower-internal/(.*)$ /$1 break;
+        proxy_pass http://aplazame_mgc_celery:5555;
+        proxy_redirect    off;
+
+        proxy_set_header Host $host;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    location /rabbitmq {
+        rewrite ^/rabbitmq/(.*)$ /$1 break;
+        proxy_pass http://rabbitmq:15672;
+        proxy_redirect    off;
+
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    location /static {
+        alias /www/static/;
+    }
+
+    location /media {
+        alias /www/media/;
+    }
+
+}

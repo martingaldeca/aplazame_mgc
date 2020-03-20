@@ -1,0 +1,35 @@
+## django
+Django==3.0.4
+
+# Gunicorn
+gunicorn==20.0.4
+
+# PostgreSQL
+psycopg2==2.8.3
+
+# Celery
+celery==4.4.2
+django_celery_beat==2.0.0
+django-celery-results==1.2.1
+flower==0.9.3
+tornado>=4.2.0,<6.0.0 # Required because tornado 6.0.0 is incompatible with flower 0.9.2
+
+# Utils
+django-extensions==2.2.8
+django-debug-toolbar==2.0
+
+# used to compress static / versioning
+django_compressor==2.4
+csscompressor==0.9.5
+
+# QA
+flake8==3.7.9
+
+# Fake data for testing
+factory_boy==2.12.0
+
+# iPython
+setuptools==46.0.0
+
+# Historic changes
+django-simple-history==2.8.0

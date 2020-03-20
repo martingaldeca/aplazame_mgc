@@ -1,0 +1,171 @@
+version: '3.7'
+services:
+  aplazame_mgc:
+    container_name: aplazame_mgc
+    hostname: aplazame_mgc
+    restart: always
+    build:
+      context: .
+      dockerfile: docker/aplazame/Dockerfile
+    command: sh post_deploy.sh
+    environment: &django_environment
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: aplazame_mgc
+      LOGGING_ROOT_DIR: /logs
+      RABBITMQ_DEFAULT_USER: "aplazame_rabbitmq_user"
+      RABBITMQ_DEFAULT_PASS: "aplazame_rabbitmq_password"
+      DEPLOY_MACHINE_IP: ${DEPLOY_MACHINE_IP}
+      NGINX_EXTERNAL_PORT: ${NGINX_EXTERNAL_PORT}
+      APP_VERSION: ${APP_VERSION}
+    ports:
+      - "3141"
+    volumes:
+      - vol_static:/static
+      - vol_media:/media
+      - vol_logs:/logs
+      - ./src/.:/aplazame_mgc
+      - ./docker/aplazame/post_deploy.sh:/aplazame_mgc/post_deploy.sh
+      - ./docker/aplazame/pre_deploy.sh:/aplazame_mgc/pre_deploy.sh
+    links:
+      - aplazame_postgres
+      - rabbitmq
+      - aplazame_mgc_celery
+    depends_on:
+      - aplazame_postgres
+      - rabbitmq
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 50m
+        max-file: "2"
+
+  nginx:
+    container_name: aplazame_mgc_nginx
+    restart: always
+    build:
+      context: ./docker/nginx/
+    ports:
+      - "${NGINX_EXTERNAL_PORT}:80"
+      - "${NGINX_EXTERNAL_SSL_PORT}:443"
+    volumes:
+      - vol_static:/www/static
+      - vol_media:/media
+      - vol_logs:/var/log/nginx/
+    depends_on:
+      - aplazame_mgc
+    links:
+      - aplazame_mgc
+      - aplazame_mgc_celery
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 50m
+        max-file: "2"
+
+  rabbitmq:
+    container_name: aplazame_mgc_rabbitmq
+    restart: always
+    image: rabbitmq:latest
+    environment:
+      RABBITMQ_DEFAULT_USER: "aplazame_mgc_rabbitmq_user"
+      RABBITMQ_DEFAULT_PASS: "1234_password_extra_safe"
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbit log_levels [{connection,error},{channel,warning}]"
+    ports:
+      - "5672"
+      - "15672"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 50m
+        max-file: "2"
+
+  aplazame_mgc_celery:
+    container_name: aplazame_mgc_celery
+    hostname: aplazame_mgc_celery
+    restart: always
+    build:
+      context: .
+      dockerfile: docker/aplazame/Dockerfile
+    environment:
+      <<: *django_environment
+    volumes:
+      - vol_logs:/logs
+      - vol_media:/media
+      - ./src/.:/aplazame_mgc
+      - ./docker/celery/docker_entrypoint.sh:/aplazame_mgc/docker_entrypoint.sh
+      - ./docker/celery/run_celery.sh:/aplazame_mgc/run_celery.sh
+      - ./docker/celery/run_worker.sh:/aplazame_mgc/run_worker.sh
+    links:
+      - rabbitmq
+    depends_on:
+      - rabbitmq
+    entrypoint: bash docker_entrypoint.sh
+    command: bash run_celery.sh
+    ports:
+      - "5555" #flower
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 50m
+        max-file: "2"
+
+  aplazame_mgc_celery_worker:
+    container_name: aplazame_mgc_celery_worker
+    hostname: aplazame_mgc_celery_worker
+    restart: always
+    build:
+      context: .
+      dockerfile: docker/aplazame/Dockerfile
+    environment:
+      <<: *django_environment
+      WORKER_NAME: aplazame_worker
+      WORKER_QUEUES: aplazame_queue
+      WORKER_CONCURRENCY: 2
+    volumes:
+      - vol_logs:/logs
+      - vol_media:/media
+      - ./src/.:/aplazame_mgc
+      - ./docker/celery/docker_entrypoint.sh:/aplazame_mgc/docker_entrypoint.sh
+      - ./docker/celery/run_celery.sh:/aplazame_mgc/run_celery.sh
+      - ./docker/celery/run_worker.sh:/aplazame_mgc/run_worker.sh
+    links:
+      - rabbitmq
+    depends_on:
+      - rabbitmq
+    entrypoint: bash docker_entrypoint.sh
+    command: bash run_worker
+    ports:
+      - "5555" #flower
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 50m
+        max-file: "2"
+
+  aplazame_postgres:
+    image: postgres:latest
+    container_name: aplazame_mgc_postgres
+    restart: 'always'
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: aplazame_mgc
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 50m
+        max-file: "2"
+    ports:
+      - "1900:5432"
+    volumes:
+      - vol_postgres_db:/var/lib/postgresql/data
+      - vol_logs:/logs
+
+volumes:
+  vol_static:
+    driver: local
+  vol_media:
+    driver: local
+  vol_logs:
+    driver: local
+  vol_postgres_db:
+    driver: local
