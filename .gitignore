@@ -1,0 +1,5 @@
+# Ignore the static files
+src/static/*
+
+#Ignore all bash files
+src/*.sh
