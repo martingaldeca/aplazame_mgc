@@ -1,5 +1,6 @@
 ## django
 Django==3.0.4
+django-choices==1.7.1
 
 # Gunicorn
 gunicorn==20.0.4

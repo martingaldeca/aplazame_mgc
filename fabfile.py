@@ -65,3 +65,8 @@ def migrations(ctx):
 @task
 def postgres(ctx):
     ctx.run('docker exec -it aplazame_postgres bash', pty=True)
+
+
+@task
+def test(ctx):
+    manage(ctx, command='test --pattern="test_*.py"', own_user=False)

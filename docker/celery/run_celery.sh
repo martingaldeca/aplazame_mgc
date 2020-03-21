@@ -24,10 +24,10 @@ CELERY_FLOWER_ARGS="$CELERY_FLOWER_ARGS --max_tasks=500" # limit maximum number 
 
 # Celery run
 rm -f celerybeat.pid
-su -m celery -c "nice -n 5 celery beat -A django_project_config.uncelery  $CELERY_BEAT_ARGS" &
+su -m celery -c "nice -n 5 celery beat -A aplazame_mgc.celery  $CELERY_BEAT_ARGS" &
 
 sleep 5
-su -m celery -c "nice -n 5 celery flower -A django_project_config.uncelery --conf=aplazame_mgc/celery/flower_config.py $CELERY_FLOWER_ARGS" &
+su -m celery -c "nice -n 5 celery flower -A aplazame_mgc.celery --conf=aplazame_mgc/celery/flower_config.py $CELERY_FLOWER_ARGS" &
 
 echo "## Wait for self services (sanity-check)"
 dockerize -wait tcp://localhost:5555 -timeout 30s # flower
