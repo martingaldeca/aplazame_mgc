@@ -41,18 +41,3 @@ class UserProfile(models.Model):
         )
         self.user_type = new_user_type
         self.save()
-
-
-@receiver(post_save, sender=User)
-def create_or_update_user_profile(sender, instance, created, **kwargs):
-    """
-    Function used to create the user profile when create the user
-    :param sender:
-    :param instance:
-    :param created:
-    :param kwargs:
-    :return:
-    """
-    if created:
-        UserProfile.objects.create(user=instance)
-    instance.userprofile.save()

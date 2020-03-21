@@ -7,7 +7,7 @@ from apps.core.models import UserTypes
 logger = logging.getLogger(__name__)
 
 
-class TestGetApi(TestCase):
+class TestUserProfile(TestCase):
 
     def setUp(self) -> None:
         self.user_profile = UserProfileFactory()

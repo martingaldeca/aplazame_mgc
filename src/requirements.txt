@@ -1,12 +1,15 @@
-## django
+# Django
 Django==3.0.4
 django-choices==1.7.1
+
+# Django-rest-framework
+djangorestframework==3.11.0
 
 # Gunicorn
 gunicorn==20.0.4
 
 # PostgreSQL
-psycopg2==2.8.3
+psycopg2==2.8.4
 
 # Celery
 celery==4.4.2
