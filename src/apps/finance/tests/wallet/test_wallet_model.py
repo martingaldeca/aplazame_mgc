@@ -1,5 +1,5 @@
 from django.db.transaction import TransactionManagementError
-from django.test import TestCase
+from django.test import TransactionTestCase
 import logging
 from apps.finance.factories import WalletFactory
 from apps.finance.models import ValidCurrencies, Action, Wallet
@@ -7,7 +7,7 @@ from apps.finance.models import ValidCurrencies, Action, Wallet
 logger = logging.getLogger(__name__)
 
 
-class TestWallet(TestCase):
+class TestWallet(TransactionTestCase):
 
     def setUp(self) -> None:
         self.start_funds = 3.14

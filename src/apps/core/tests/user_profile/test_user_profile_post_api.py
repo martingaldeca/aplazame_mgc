@@ -3,7 +3,7 @@ import json
 from django.db.transaction import TransactionManagementError
 
 from apps.core.models import UserProfile
-from django.test import TestCase
+from django.test import TransactionTestCase
 
 from rest_framework.reverse import reverse
 
@@ -12,7 +12,7 @@ from urllib.parse import urlencode, urljoin
 from rest_framework.test import APIClient
 
 
-class TestUserProfileGetApi(TestCase):
+class TestUserProfileGetApi(TransactionTestCase):
 
     def setUp(self):
         super().setUp()

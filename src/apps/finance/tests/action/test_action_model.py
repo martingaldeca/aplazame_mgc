@@ -1,5 +1,5 @@
 from django.db.transaction import TransactionManagementError
-from django.test import TestCase
+from django.test import TransactionTestCase
 import logging
 from apps.finance.factories import ActionFactory
 from apps.finance.models import Action, ValidActions
@@ -7,7 +7,7 @@ from apps.finance.models import Action, ValidActions
 logger = logging.getLogger(__name__)
 
 
-class TestAction(TestCase):
+class TestAction(TransactionTestCase):
 
     def setUp(self) -> None:
         self.action = ActionFactory.create()

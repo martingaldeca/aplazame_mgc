@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TransactionTestCase
 import logging
 
 from apps.core.factories import UserProfileFactory
@@ -7,7 +7,7 @@ from apps.core.models import UserTypes
 logger = logging.getLogger(__name__)
 
 
-class TestUserProfile(TestCase):
+class TestUserProfile(TransactionTestCase):
 
     def setUp(self) -> None:
         self.user_profile = UserProfileFactory.create()
