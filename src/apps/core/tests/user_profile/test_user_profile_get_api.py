@@ -16,7 +16,7 @@ class TestUserProfileGetApi(TestCase):
         self.raw_url = reverse('list-users')
         self.query_params = {'limit': 10, 'offset': 0, 'page': 1}
         self.real_url = urljoin(self.raw_url, f'?{urlencode(self.query_params)}')
-        self.user_profile = UserProfileFactory()
+        self.user_profile = UserProfileFactory.create()
 
     def tearDown(self) -> None:
         UserProfile.objects.all().delete()
@@ -38,7 +38,7 @@ class TestUserProfileGetApi(TestCase):
         :return:
         """
         for i in range(50):
-            UserProfileFactory()
+            UserProfileFactory.create()
         obtained_response = self.request.get(self.real_url)
         results = obtained_response.data['results']
         self.assertEqual(10, len(results), "Limit in get for user_profile works properly.")
@@ -49,7 +49,7 @@ class TestUserProfileGetApi(TestCase):
         :return:
         """
         for i in range(50):
-            UserProfileFactory()
+            UserProfileFactory.create()
         obtained_response = self.request.get(self.real_url)
         count = obtained_response.data['count']
         self.assertEqual(51, count, "Counter in get for user_profile works properly.")

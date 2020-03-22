@@ -37,3 +37,6 @@ setuptools==46.0.0
 
 # Historic changes
 django-simple-history==2.8.0
+
+# Currency converter
+CurrencyConverter==0.14.1

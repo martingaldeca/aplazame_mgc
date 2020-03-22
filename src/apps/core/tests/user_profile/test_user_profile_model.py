@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class TestUserProfile(TestCase):
 
     def setUp(self) -> None:
-        self.user_profile = UserProfileFactory()
+        self.user_profile = UserProfileFactory.create()
         super().setUp()
 
     def tearDown(self) -> None:

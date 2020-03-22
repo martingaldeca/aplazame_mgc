@@ -26,7 +26,7 @@ def resolve_user_profile(user__username: str, user_type: int = 1) -> UserProfile
         if type(user_type) is not int:
             raise ValidationError(f"user_type param should be '{int}' instead of '{type(user_type)}'.")
 
-        logger.info(f"The user profile for user '{user__username}' does not exists. A new user profile will be created.")
+        logger.debug(f"The user profile for user '{user__username}' does not exists. A new user profile will be created.")
         user = resolve_user(username=user__username)
         user_profile = UserProfileFactory(
             user=user,

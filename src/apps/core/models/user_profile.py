@@ -28,7 +28,7 @@ class UserProfile(models.Model):
     )
 
     def __str__(self):
-        return f'{self.user} - {UserTypes.attributes[self.user_type]}'
+        return f'{self.user.id} - {UserTypes.attributes[self.user_type]}'
 
     def change_user_type(self, new_user_type: int = 0):
         """

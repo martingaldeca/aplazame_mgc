@@ -24,7 +24,7 @@ def resolve_user(username: str, user__first_name: str = None, user__last_name: s
         if type(username) is not str:
             raise ValidationError(f"username param should be '{str}' instead of '{type(username)}'.")
 
-        logger.info(f"The user '{username}' does not exists. A new user will be created.")
+        logger.debug(f"The user '{username}' does not exists. A new user will be created.")
         user = UserFactory(
             username=username,
             first_name=user__first_name if user__first_name is not None else '',

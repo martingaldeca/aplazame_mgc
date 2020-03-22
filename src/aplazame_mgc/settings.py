@@ -27,7 +27,8 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 PROJECT_APPS = [
-    'apps.core'
+    'apps.core',
+    'apps.finance'
 ]
 
 INSTALLED_APPS = [
@@ -158,12 +159,17 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console', 'file'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'level': 'INFO',
             'propagate': False,
         },
         'apps.core': {
             'handlers': ['console', 'file'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'apps.finance': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
             'propagate': False,
         },
     },
