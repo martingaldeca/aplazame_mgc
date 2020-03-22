@@ -1,13 +1,16 @@
 import json
 
+from django.contrib.auth.models import User
 from django.db.transaction import TransactionManagementError
 
-from apps.finance.models import Action
+from apps.finance.models import Action, Wallet
 from django.test import TransactionTestCase
 
 from rest_framework.reverse import reverse
 
 from rest_framework.test import APIClient
+
+from apps.core.models import UserProfile
 
 
 class TestActionPostApi(TransactionTestCase):
@@ -20,6 +23,9 @@ class TestActionPostApi(TransactionTestCase):
     def tearDown(self) -> None:
         try:
             Action.objects.all().delete()
+            Wallet.objects.all().delete()
+            User.objects.all().delete()
+            UserProfile.objects.all().delete()
         except TransactionManagementError:
             pass
         return super().tearDown()

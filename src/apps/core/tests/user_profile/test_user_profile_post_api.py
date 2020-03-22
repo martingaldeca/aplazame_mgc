@@ -1,5 +1,5 @@
 import json
-
+from django.contrib.auth.models import User
 from django.db.transaction import TransactionManagementError
 
 from apps.core.models import UserProfile
@@ -19,6 +19,7 @@ class TestUserProfilePostApi(TransactionTestCase):
 
     def tearDown(self) -> None:
         try:
+            User.objects.all().delete()
             UserProfile.objects.all().delete()
         except TransactionManagementError:
             pass

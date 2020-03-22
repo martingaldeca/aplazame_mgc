@@ -69,4 +69,4 @@ def postgres(ctx):
 
 @task
 def test(ctx):
-    manage(ctx, command='test --pattern="test_*.py"', own_user=False)
+    manage(ctx, command='test --pattern="test_*.py" --keepdb', own_user=False)

@@ -46,13 +46,14 @@ def add_funds(amount_to_add: float = 0, token: str = None, comment: str = '', te
             logger.warning(message)
             raise WrongTokenError(message)
         if token != wallet.token.__str__():
+            # We should never enter here, if is the case it could be a problem with managers
             raise WrongTokenError(f"Token '{token}' invalid for wallet '{wallet.id}'.")
         if amount_to_add < 0:
             logger.warning(f"Trying to add negative amount to the wallet funds ['{amount_to_add}'], this is not allowed.")
             raise InvalidAmount(f"The amount '{amount_to_add}' must be positive.")
 
         logger.info(f"Wallet '{wallet.id}' will add {amount_to_add} to the funds.")
-        wallet.balance += amount_to_add
+        wallet.balance += Decimal(amount_to_add)
         wallet.save()
 
         # Generate the action in the database
@@ -128,7 +129,6 @@ def add_charge(
                 date=converter_date
             )
         debtor_amount_to_charge = Decimal(debtor_amount_to_charge)
-        logger.info(f"Búscame {type(debtor_amount_to_charge)}")
 
         # Must check that there are enough funds in the debtor wallet
         if debtor_wallet.balance - debtor_amount_to_charge < 0:

@@ -1,3 +1,6 @@
+from django.contrib.auth.models import User
+from django.db.transaction import TransactionManagementError
+
 from apps.core.models import UserProfile
 from django.test import TransactionTestCase
 
@@ -19,7 +22,11 @@ class TestUserProfileGetApi(TransactionTestCase):
         self.user_profile = UserProfileFactory.create()
 
     def tearDown(self) -> None:
-        UserProfile.objects.all().delete()
+        try:
+            User.objects.all().delete()
+            UserProfile.objects.all().delete()
+        except TransactionManagementError:
+            pass
         return super().tearDown()
 
     def test_user_profile_get(self):
