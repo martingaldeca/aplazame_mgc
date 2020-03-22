@@ -137,6 +137,16 @@ def add_charge(
                 f"has not enough funds for a charge of {debtor_amount_to_charge} {ValidCurrencies.attributes[debtor_wallet.currency]}"
             )
             logger.warning(message)
+
+            # Must save the insufficient funds entries
+            Action(
+                created_by=creditor_wallet.user,
+                created=timezone.now(),
+                wallet=creditor_wallet,
+                action_type=ValidActions.insufficient_funds,
+                comment=comment,
+                delta=creditor_amount_to_charge
+            ).save()
             raise InsufficientFundsException(message)
         logger.info(
             f"The commerce '{creditor_wallet.user.id}' will charge "

@@ -18,6 +18,7 @@ class ValidActions(DjangoChoices):
     charge = ChoiceItem(1)
     withdraw = ChoiceItem(2)
     payment = ChoiceItem(3)
+    insufficient_funds = ChoiceItem(4)
 
 
 class Action(models.Model):
