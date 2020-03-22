@@ -13,6 +13,11 @@ def logs(ctx):
 
 
 @task
+def celery_logs(ctx):
+    ctx.run('docker logs --tail 50 -f aplazame_mgc_celery_worker', pty=True)
+
+
+@task
 def down(ctx):
     ctx.run('docker-compose down')
 

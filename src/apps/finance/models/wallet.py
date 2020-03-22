@@ -30,8 +30,15 @@ class Wallet(models.Model):
     currency = models.IntegerField(
         choices=ValidCurrencies.choices, default=ValidCurrencies.EUR, null=True, blank=True, verbose_name="Wallet currency"
     )
+    is_corrupted = models.BooleanField(default=False, null=False, blank=False)  # Field to check for the integrity of the database
 
     def __str__(self):
         return f'{self.user.id}-{self.balance}-{ValidCurrencies.attributes[self.currency]}s-{self.token}'
 
-
+    def set_corrupted(self):
+        """
+        If this actions happens something really wrong happens, and the fix should be done manually (set the is_correct value to true again)
+        :return:
+        """
+        self.is_corrupted = True
+        self.save()

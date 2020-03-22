@@ -16,7 +16,7 @@ from apps.finance.models import Wallet, Action, ValidActions, ValidCurrencies
 from logging import getLogger
 
 logger = getLogger(__name__)
-converter = CurrencyConverter()
+converter = CurrencyConverter(fallback_on_missing_rate=True)
 
 
 # TODO migrate this to celery task

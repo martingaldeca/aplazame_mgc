@@ -17,6 +17,7 @@ services:
       DEPLOY_MACHINE_IP: ${DEPLOY_MACHINE_IP}
       NGINX_EXTERNAL_PORT: ${NGINX_EXTERNAL_PORT}
       APP_VERSION: ${APP_VERSION}
+      DJANGO_SETTINGS_MODULE: 'aplazame_mgc.settings'
     ports:
       - "3141"
     volumes:
@@ -133,7 +134,7 @@ services:
     depends_on:
       - rabbitmq
     entrypoint: bash docker_entrypoint.sh
-    command: bash run_worker
+    command: bash run_worker.sh
     ports:
       - "5555" #flower
     logging:

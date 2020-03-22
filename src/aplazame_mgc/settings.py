@@ -43,6 +43,11 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'django_celery_results',
 
+    'rest_framework',
+
+    # Historical
+    'simple_history',
+
 ] + PROJECT_APPS
 
 MIDDLEWARE = [
@@ -151,6 +156,12 @@ LOGGING = {
             'filename': '/logs/debug.log',
             'formatter': 'simple'
         },
+        'celery': {
+            'level': 'INFO',
+            'class': 'logging.handlers.WatchedFileHandler',
+            'filename': '/logs/celery.log',
+            'formatter': 'simple',
+        },
     },
     'root': {
         'handlers': ['console', 'file'],
@@ -168,6 +179,11 @@ LOGGING = {
             'propagate': False,
         },
         'apps.finance': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'aplazame_mgc.celery': {
             'handlers': ['console', 'file'],
             'level': 'DEBUG',
             'propagate': False,

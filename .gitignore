@@ -3,3 +3,4 @@ src/*.sh
 
 # Ignore pycharm files
 .idea
+/src/celery*

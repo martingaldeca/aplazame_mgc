@@ -5,10 +5,7 @@ import os
 # Extra configuration for Flower. Basic celery setup is still required.
 
 # RabbitMQ management api
-broker_api = 'http://{user}:{password}@rabbitmq:15672/api/'.format(
-    user=os.environ.get('RABBITMQ_DEFAULT_USER'),
-    password=os.environ.get('RABBITMQ_DEFAULT_PASS'),
-)
+broker_api = 'http://aplazame_mgc_rabbitmq_user:1234_password_extra_safe@rabbitmq:15672/api/'
 
 
 # Set logging level
