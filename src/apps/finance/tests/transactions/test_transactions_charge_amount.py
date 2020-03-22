@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from decimal import Decimal
 import threading
 from apps.core.models import UserTypes
@@ -9,7 +10,7 @@ from django.test import TransactionTestCase
 import logging
 from apps.finance.transactions import add_charge
 from apps.finance.factories import WalletFactory
-from apps.finance.models import Action, Wallet
+from apps.finance.models import Action, Wallet, ValidCurrencies
 from apps.finance.exceptions import WrongTokenError, InvalidAmount, InsufficientFundsException
 from apps.core.factories import UserProfileFactory
 
@@ -121,3 +122,27 @@ class TestTransactionsChargeAmount(TransactionTestCase):
         self.assertAlmostEqual(Decimal(1000 + self.start_commerce_funds), self.commerce_wallet.balance, msg="Correct balance for commerce.")
         self.assertAlmostEqual(Decimal(self.start_customer_funds - 1000), self.customer_wallet.balance, msg="Correct balance for commerce.")
 
+    def test_change_currency(self):
+        """
+        This test check that the currency change works ok
+        :return:
+        """
+        converter_date = datetime.strptime('2001-09-11', '%Y-%m-%d')
+        self.commerce_wallet.currency = ValidCurrencies.USD
+        self.commerce_wallet.save()
+        add_charge(
+            amount_to_charge=1000, creditor_token=str(self.commerce_wallet.token),
+            debtor_token=str(self.customer_wallet.token), comment='TROLOLOLO charge',
+            converter_date=converter_date
+        )
+
+        # This day the rate change is 1000 $ == 896.3999999999999772626324556767940521240234375 €
+        # So the final balances will be 1000 for commerce and almost 104.6 € for customer
+        self.commerce_wallet.refresh_from_db()
+        self.customer_wallet.refresh_from_db()
+        self.assertAlmostEqual(1000 + self.start_commerce_funds, self.commerce_wallet.balance, msg="Correct balance for commerce.")
+        self.assertAlmostEqual(
+            Decimal(self.start_customer_funds) - Decimal(896.3999999999999772626324556767940521240234375),
+            self.customer_wallet.balance,
+            msg="Correct balance for commerce."
+        )

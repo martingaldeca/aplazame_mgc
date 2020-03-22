@@ -1,4 +1,7 @@
+from decimal import Decimal
+
 from currency_converter import CurrencyConverter
+from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
@@ -64,9 +67,13 @@ def add_funds(amount_to_add: float = 0, token: str = None, comment: str = '', te
 
 
 # TODO migrate this to celery task
-def add_charge(amount_to_charge: float = 0, creditor_token: str = None, debtor_token: str = None, comment: str = '', test_sleep_time: int = 0):
+def add_charge(
+        amount_to_charge: float = 0, creditor_token: str = None, debtor_token: str = None, comment: str = '',
+        test_sleep_time: int = 0, converter_date: datetime = datetime.now()
+):
     """
     Transaction to add a charge to a wallet from other
+    :param converter_date: Converter time parameter for tests purposes
     :param amount_to_charge:
     :param creditor_token:
     :param debtor_token:
@@ -110,15 +117,18 @@ def add_charge(amount_to_charge: float = 0, creditor_token: str = None, debtor_t
             raise InvalidAmount(message)
 
         # Check the currencies and convert if needed
-        creditor_amount_to_charge = amount_to_charge
+        creditor_amount_to_charge = Decimal(amount_to_charge)
         debtor_amount_to_charge = amount_to_charge
         if debtor_wallet.currency != creditor_wallet.currency:
             # We convert the creditor amount to the debtor amount
             debtor_amount_to_charge = converter.convert(
                 amount_to_charge,
+                str(ValidCurrencies.attributes[debtor_wallet.currency]),
                 str(ValidCurrencies.attributes[creditor_wallet.currency]),
-                str(ValidCurrencies.attributes[debtor_wallet.currency])
+                date=converter_date
             )
+        debtor_amount_to_charge = Decimal(debtor_amount_to_charge)
+        logger.info(f"Búscame {type(debtor_amount_to_charge)}")
 
         # Must check that there are enough funds in the debtor wallet
         if debtor_wallet.balance - debtor_amount_to_charge < 0:
