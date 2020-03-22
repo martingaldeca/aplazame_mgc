@@ -7,7 +7,7 @@ from django.db.models import Q, QuerySet
 from rest_framework import generics, filters
 from rest_framework.exceptions import server_error
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK, HTTP_409_CONFLICT
+from rest_framework.status import HTTP_200_OK, HTTP_409_CONFLICT, HTTP_403_FORBIDDEN
 
 logger = getLogger(__name__)
 
@@ -31,6 +31,9 @@ class GenericList(generics.ListCreateAPIView):
 
         # Identification value to show if needed
         self.identification_value = ''
+
+        # You can define if post are allowed or not for the model
+        self.post_allowed = True
 
     def _set_fields(self):
         """
@@ -111,6 +114,16 @@ class GenericList(generics.ListCreateAPIView):
         return queryset
 
     def post(self, request, *args, **kwargs):
+        if self.post_allowed is False:
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip = x_forwarded_for.split(',')[0]
+            else:
+                ip = request.META.get('REMOTE_ADDR')
+            logger.error(f"Someone try to post directly to model {self.model.__name__} from '{ip}'.")
+            content = {"forbidden": f"You can not post to this entry point. The address: '{ip}' will be investigate."}
+            return Response(content, status=HTTP_403_FORBIDDEN)
+
         start_time = time.time()
 
         request_data = request.data.get(self.model.__name__, None)

@@ -7,12 +7,10 @@ from django.test import TransactionTestCase
 
 from rest_framework.reverse import reverse
 
-from apps.core.factories import *
-from urllib.parse import urlencode, urljoin
 from rest_framework.test import APIClient
 
 
-class TestUserProfileGetApi(TransactionTestCase):
+class TestUserProfilePostApi(TransactionTestCase):
 
     def setUp(self):
         super().setUp()
