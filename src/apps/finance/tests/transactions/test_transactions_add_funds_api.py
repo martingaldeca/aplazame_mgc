@@ -41,7 +41,7 @@ class TestAddFundsApi(TransactionTestCase):
         self.wallet.refresh_from_db()
         self.assertAlmostEqual(1000, self.wallet.balance, msg="Correct balance.")
 
-    def test_bad_token_add_funds(self):
+    def test_bad_token_add_funds_api(self):
         body = {
             "amount_to_add": 500.00,
             "token": 'bad_token',
@@ -62,7 +62,7 @@ class TestAddFundsApi(TransactionTestCase):
         self.assertEqual(406, obtained_response.status_code, "Wrong token.")
         self.assertEqual(f"WrongTokenError, The wallet with token '{uuid_to_use}' does not exists. ", obtained_response.data['error'])
 
-    def test_invalid_amount_to_add(self):
+    def test_invalid_amount_to_add_api(self):
         body = {
             "amount_to_add": -500.00,
             "token": str(self.wallet.token),
