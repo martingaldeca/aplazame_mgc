@@ -87,8 +87,8 @@ class TestChargeAmountApi(TransactionTestCase):
         obtained_response = self.request.post(self.url, data=body_as_json, content_type='application/json')
         self.assertEqual(406, obtained_response.status_code, "Invalid amount.")
         self.assertEqual(
-            f"InvalidAmount, Trying to charge negative amount to the wallet "
-            f"funds ['-1000.0'], this is not allowed. ", obtained_response.data['error']
+            "InvalidAmount, Trying to charge negative amount to the wallet funds ['-1000.0'], this is not allowed. ",
+            obtained_response.data['error'],
         )
 
     def test_not_all_need_fields_posted(self):
@@ -101,8 +101,8 @@ class TestChargeAmountApi(TransactionTestCase):
         obtained_response = self.request.post(self.url, data=body_as_json, content_type='application/json')
         self.assertEqual(400, obtained_response.status_code, "Not all needed fields posted.")
         self.assertEqual(
-            f"The post need the fields ['amount_to_charge', 'creditor_token', 'debtor_token'] but "
-            f"did not pass ['amount_to_charge'] fields.", obtained_response.data['error']
+            "The post need the fields ['amount_to_charge', 'creditor_token', 'debtor_token'] but did not pass ['amount_to_charge'] fields.",
+            obtained_response.data['error'],
         )
 
     def test_not_commerce_charge_api(self):

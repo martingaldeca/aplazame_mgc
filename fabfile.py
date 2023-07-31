@@ -36,9 +36,15 @@ def downup(ctx):
 @task
 def manage(ctx, command=None, args='', own_user=True):
     if own_user:
-        ctx.run('docker exec -u{} -it aplazame_mgc python3 manage.py {} {}'.format(os.getuid(), command, args), pty=True)
+        ctx.run(
+            f'docker exec -u{os.getuid()} -it aplazame_mgc python3 manage.py {command} {args}',
+            pty=True,
+        )
     else:
-        ctx.run('docker exec -it aplazame_mgc python3 manage.py {} {}'.format(command, args), pty=True)
+        ctx.run(
+            f'docker exec -it aplazame_mgc python3 manage.py {command} {args}',
+            pty=True,
+        )
 
 
 @task

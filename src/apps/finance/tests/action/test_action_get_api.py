@@ -48,7 +48,7 @@ class TestActionGetApi(TransactionTestCase):
         Test to check that the pagination works properly
         :return:
         """
-        for i in range(50):
+        for _ in range(50):
             ActionFactory.create()
         obtained_response = self.request.get(self.real_url)
         results = obtained_response.data['results']
@@ -59,7 +59,7 @@ class TestActionGetApi(TransactionTestCase):
         Test to check that the counter works properly
         :return:
         """
-        for i in range(50):
+        for _ in range(50):
             ActionFactory.create()
         obtained_response = self.request.get(self.real_url)
         count = obtained_response.data['count']

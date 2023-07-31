@@ -65,13 +65,16 @@ class GenericList(generics.ListCreateAPIView):
         assert self.paginator is not None
 
         old_response = self.paginator.get_paginated_response(data).data
-        final_response = Response(OrderedDict([
-            ('count', old_response['count']),
-            ('next', old_response['next']),
-            ('previous', old_response['previous']),
-            ('results', old_response['results']),
-        ]))
-        return final_response
+        return Response(
+            OrderedDict(
+                [
+                    ('count', old_response['count']),
+                    ('next', old_response['next']),
+                    ('previous', old_response['previous']),
+                    ('results', old_response['results']),
+                ]
+            )
+        )
 
     def get_queryset(self):
         """
@@ -115,8 +118,7 @@ class GenericList(generics.ListCreateAPIView):
 
     def post(self, request, *args, **kwargs):
         if self.post_allowed is False:
-            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-            if x_forwarded_for:
+            if x_forwarded_for := request.META.get('HTTP_X_FORWARDED_FOR'):
                 ip = x_forwarded_for.split(',')[0]
             else:
                 ip = request.META.get('REMOTE_ADDR')

@@ -26,10 +26,12 @@ class CommonTransactionApi(APIView):
         # Get the data from the post
         request_data = request.data
 
-        # The post must be very specific, so we must check that we have needed fields
-        not_passed_elements = [field for field in self.needed_fields if field not in request_data.keys()]
-        if len(not_passed_elements) > 0:
-            logger.error(f"Bad format in post.")
+        if not_passed_elements := [
+            field
+            for field in self.needed_fields
+            if field not in request_data.keys()
+        ]:
+            logger.error("Bad format in post.")
             content = {
                 "error": (
                     f"The post need the fields {self.needed_fields} but "

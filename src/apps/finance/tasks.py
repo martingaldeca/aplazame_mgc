@@ -52,7 +52,7 @@ def populate_database_for_test(self):
         }
     }
     commerce_wallets = []
-    for commerce_wallet_counter in range(100):
+    for _ in range(100):
         commerce_user = UserProfileFactory.create(user_type=UserTypes.commerce)
         commerce_wallets.append(WalletFactory.create(
             user=commerce_user.user, token=uuid.uuid4(),
@@ -60,7 +60,7 @@ def populate_database_for_test(self):
             currency=random.choice([currency[0] for currency in ValidCurrencies])
         ))
 
-    for customer_wallet_counter in range(5000):
+    for _ in range(5000):
         customer_user = UserProfileFactory.create(user_type=UserTypes.customer)
         customer_wallet = (WalletFactory.create(
             user=customer_user.user, token=uuid.uuid4(),
@@ -68,7 +68,7 @@ def populate_database_for_test(self):
             currency=random.choice([currency[0] for currency in ValidCurrencies])
         ))
 
-        for action_counter in range(5000):
+        for _ in range(5000):
             transaction_parameters = {
                 'charge_parameters': {
                     'amount_to_charge': random.uniform(0, 10000000),
@@ -89,4 +89,3 @@ def populate_database_for_test(self):
                 transaction_function(**transaction_parameter_to_use)
             except Exception as ex:
                 logger.info(ex)
-                pass
